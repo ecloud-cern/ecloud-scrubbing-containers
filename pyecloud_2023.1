@@ -1,0 +1,51 @@
+FROM gitlab-registry.cern.ch/linuxsupport/cs9-base
+LABEL author="konstantinos.paraschou@cern.ch"
+
+RUN dnf -y install curl which bzip2 libgfortran git file man-db make \
+                   gcc gcc-gfortran python3-pip python3-devel wget vim locmap-release
+
+RUN dnf -y install locmap
+
+RUN locmap --enable kerberos
+RUN locmap --enable afs
+RUN locmap --enable eosclient
+RUN locmap --configure kerberos; exit 0
+RUN locmap --configure afs; exit 0
+RUN locmap --configure eosclient; exit 0
+
+RUN dnf -y install eos-xrootd xrootd xrootd-client
+
+WORKDIR /usr/local/pycomplete
+
+RUN wget https://github.com/conda-forge/miniforge/releases/download/23.3.1-1/Miniforge3-23.3.1-1-Linux-x86_64.sh
+RUN bash Miniforge3-23.3.1-1-Linux-x86_64.sh -b -p /usr/local/pycomplete/miniforge3
+RUN rm Miniforge3-23.3.1-1-Linux-x86_64.sh
+
+RUN source /usr/local/pycomplete/miniforge3/bin/activate && \
+    conda init && \
+    conda install pip && \
+    conda install compilers=1.6.0
+
+RUN source /usr/local/pycomplete/miniforge3/bin/activate && \
+    conda install matplotlib=3.8.0 numpy=1.26.0 scipy=1.11.3 pandas=2.1.1 lark=1.1.7 && \
+    conda install h5py=3.10.0 ipython=8.16.1 rich=13.6.0 cython=3.0.4 && \
+    pip install cpymad==1.14.2 && \
+    pip list && \
+    conda clean --force-pkgs-dirs
+
+WORKDIR /usr/local/PyFRIENDS
+RUN git clone --depth 1 --branch v8.7.0 https://github.com/pycomplete/PyECLOUD
+RUN source /usr/local/pycomplete/miniforge3/bin/activate && \
+    cd PyECLOUD && ./setup_pyecloud
+
+RUN git clone --depth 1 https://github.com/pycomplete/PyPIC
+RUN source /usr/local/pycomplete/miniforge3/bin/activate && \
+    cd PyPIC && make
+
+RUN git clone --depth 1 https://github.com/pycomplete/PyKLU
+RUN source /usr/local/pycomplete/miniforge3/bin/activate && \
+    cd PyKLU && ./install
+   
+ENV PYTHONPATH="/usr/local/PyFRIENDS/" 
+RUN yum clean all
+
