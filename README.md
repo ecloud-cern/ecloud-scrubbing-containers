@@ -16,3 +16,16 @@ $ sudo push registry.cern.ch/ecloud-scrubbing/xsuite:2022.1
 
 Your password to login in registry.cern.ch via docker be found in the user profile in registry.cern.ch (called "CLI secret").
 
+## Available images:
+
+https://registry.cern.ch/harbor/projects/3625/repositories
+
+Xsuite:
+```
+registry.cern.ch/ecloud-scrubbing/xsuite:2022.1
+```
+
+Pyecloud:
+```
+registry.cern.ch/ecloud-scrubbing/pyecloud:2023.1
+```
