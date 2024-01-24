@@ -72,7 +72,7 @@ RUN git clone --depth 1 https://github.com/pycomplete/PyKLU
 WORKDIR PyKLU
 RUN ./install
    
-RUN pip install git+https://github.com/kparasch/TricubicInterpolation.git
+RUN pip install git+https://github.com/kparasch/TricubicInterpolation.git@v1.1.0
 
 # Clean cache to reduce memory footprint as much as possible
 RUN conda clean --force-pkgs-dirs
