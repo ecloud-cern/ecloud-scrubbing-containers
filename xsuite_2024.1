@@ -72,6 +72,8 @@ RUN pip install nafflib==1.0.2 cpymad==1.15.0 pyheadtail==1.16.1
 
 RUN pip install xsuite==0.5.2 xobjects==0.2.10 xtrack==0.48.1 xfields==0.15.0 xpart==0.16.3 xdeps==0.5.2
 
+RUN pip install git+https://github.com/ecloud-cern/ECIX_tools.git@v1.0
+
 RUN pip list
 
 # Clean cache to reduce memory footprint as much as possible
