@@ -23,9 +23,13 @@ https://registry.cern.ch/harbor/projects/3625/repositories
 Xsuite:
 ```
 registry.cern.ch/ecloud-scrubbing/xsuite:2022.1
+registry.cern.ch/ecloud-scrubbing/xsuite:2024.1
+registry.cern.ch/ecloud-scrubbing/xsuite:2024.2
+registry.cern.ch/ecloud-scrubbing/xsuite:2024Feb
 ```
 
 Pyecloud:
 ```
 registry.cern.ch/ecloud-scrubbing/pyecloud:2023.1
+registry.cern.ch/ecloud-scrubbing/pyecloud:2024.1
 ```
