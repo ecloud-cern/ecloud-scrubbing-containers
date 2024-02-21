@@ -68,12 +68,12 @@ RUN pip install matplotlib==3.8.2 ipython==8.18.1 pandas==2.1.4 lark==1.1.8 h5py
     gpustat==1.1.1 rich==13.7.0 cython==3.0.7 numpy==1.26.3 scipy==1.11.4 pendulum==3.0.0 \
     cmcrameri==1.7 pytest==8.0.0
 
-RUN pip install nafflib==1.0.2 cpymad==1.15.0 pyheadtail==1.16.1
+RUN pip install nafflib==2.0.1 cpymad==1.15.0 pyheadtail==1.16.1
 
-RUN pip install xobjects==0.2.10 xtrack==0.52.0 xpart==0.16.4 xdeps==0.5.5
+RUN pip install xsuite==0.6.0 xobjects==0.2.10 xtrack==0.52.0 xfields==0.15.0 xpart==0.16.4 xdeps==0.5.6
 
-RUN pip install git+https://github.com/kparasch/xfields.git@108a841de3051d23fe175e4f5db2dcc0c5847663
-RUN pip install git+https://github.com/ecloud-cern/ECIX_tools.git@v2.2
+RUN pip install git+https://github.com/kparasch/xfields.git@d7e1dd47a2e2b8f547d66f92d5a5c358b216f4fa
+RUN pip install git+https://github.com/ecloud-cern/ECIX_tools.git@v2.3
 
 RUN pip list
 
