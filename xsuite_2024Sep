@@ -1,0 +1,81 @@
+FROM gitlab-registry.cern.ch/linuxsupport/alma9-base
+LABEL author="konstantinos.paraschou@cern.ch"
+
+RUN dnf -y install curl which bzip2 libgfortran git file man-db make \
+                   gcc gcc-gfortran python3-pip python3-devel wget vim locmap-release
+
+RUN dnf -y install locmap
+
+RUN locmap --enable kerberos
+RUN locmap --enable afs
+RUN locmap --enable eosclient
+RUN locmap --enable cvmfs
+RUN locmap --configure kerberos; exit 0
+RUN locmap --configure afs; exit 0
+RUN locmap --configure eosclient; exit 0
+RUN locmap --configure cvmfs; exit 0
+
+RUN dnf -y install eos-xrootd xrootd xrootd-client
+
+WORKDIR /usr/local/xsuite
+
+RUN wget https://github.com/conda-forge/miniforge/releases/download/23.3.1-1/Miniforge3-23.3.1-1-Linux-x86_64.sh
+RUN bash Miniforge3-23.3.1-1-Linux-x86_64.sh -b -p /usr/local/xsuite/miniforge3
+RUN rm Miniforge3-23.3.1-1-Linux-x86_64.sh
+
+RUN source /usr/local/xsuite/miniforge3/bin/activate && conda init
+
+# RUN source /usr/local/xsuite/miniforge3/bin/activate && \
+#     conda init && \
+#     # conda create --name xsuite python=3.9 && \
+#     conda install python=3.9 && \
+#     # conda activate xsuite && \
+#     conda install pip && \
+#     conda install compilers=1.5.1
+
+# Set paths in order not to need to source .../bin/activate
+ENV PATH="/usr/local/xsuite/miniforge3/bin"
+ENV PATH="$PATH:/usr/local/xsuite/miniforge3/condabin"
+ENV PATH="$PATH:/root/.local/bin:/root/bin/usr/sue/sbin"
+ENV PATH="$PATH:/usr/local/bin:/usr/sbin:/usr/bin:/sbin"
+ENV PATH="$PATH:/opt/puppetlabs/bin"
+
+# RUN conda install python=3.9
+RUN conda install pip
+RUN conda install compilers=1.5.1
+
+ENV LD="/usr/local/xsuite/miniforge3/bin/x86_64-conda-linux-gnu-ld"
+
+ENV LDFLAGS="-Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl"
+ENV LDFLAGS="$LDFLAGS,--disable-new-dtags -Wl,--gc-sections -Wl,--allow-shlib-undefined -Wl"
+ENV LDFLAGS="$LDFLAGS,-rpath"
+ENV LDFLAGS="$LDFLAGS,/usr/local/xsuite/miniforge3/lib -Wl"
+ENV LDFLAGS="$LDFLAGS,-rpath-link"
+ENV LDFLAGS="$LDFLAGS,/usr/local/xsuite/miniforge3/lib -L/usr/local/xsuite/miniforge3/lib"
+
+# RUN echo "conda activate xsuite" >> ~/.bashrc
+
+
+# Install cuda and cupy
+# RUN conda install -c nvidia cuda-toolkit=12.3.2
+RUN  conda install -c nvidia cuda-libraries-dev=12.3.2 \
+     cuda-nvcc=12.3.107 cuda-nvtx=12.3.101 cuda-cupti=12.3.101
+# RUN  conda install -c nvidia cuda-cudart-dev=12.3.101
+RUN pip install cupy-cuda12x
+
+# Install general python packages
+RUN pip install matplotlib==3.8.2 ipython==8.18.1 pandas==2.1.4 lark==1.1.8 h5py==3.10.0 \
+    gpustat==1.1.1 rich==13.7.0 cython==3.0.7 numpy==1.26.3 scipy==1.11.4 pendulum==3.0.0 \
+    cmcrameri==1.7 pytest==8.0.0
+
+RUN pip install nafflib==2.0.1 cpymad==1.15.0 pyheadtail==1.16.1
+
+RUN pip install xsuite==0.16.6
+#RUN pip install xsuite==0.16.6 xobjects==0.4.4 xtrack==0.66.1 xfields==0.20.3 xpart==0.18.5 xdeps==0.6.3
+
+RUN pip install git+https://github.com/ecloud-cern/ECIX_tools.git@v2.2
+
+RUN pip list
+
+# Clean cache to reduce memory footprint as much as possible
+RUN conda clean --force-pkgs-dirs
